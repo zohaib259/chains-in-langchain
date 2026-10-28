@@ -1,18 +1,28 @@
-from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
+from langchain_huggingface import HuggingFaceEndpoint
 
+# Load environment variables from .env file
 load_dotenv()
 
-# Updated to an actively supported serverless model on HF Router
+# Option 1: Set token via code if not using a .env file
+# os.environ["HUGGINGFACEHUB_API_TOKEN"] = "your_huggingface_token_here"
+
+# Initialize an open-source model via Hugging Face Serverless Inference API
+# We use 'mistralai/Mistral-7B-Instruct-v0.2' as an open-source model example
 llm = HuggingFaceEndpoint(
-    model="meta-llama/Meta-Llama-3-8B-Instruct",
+    repo_id="mistralai/Mistral-7B-Instruct-v0.2",
     task="text-generation",
-    huggingfacehub_api_token=os.getenv("HUGGINGFACEHUB_ACCESS_TOKEN"),
+    max_new_tokens=100,
+    temperature=0.7,
 )
 
-model = ChatHuggingFace(llm=llm)
+# Define prompt
+prompt = "How are you?"
 
-result = model.invoke("write a python code to remind me to drink water every hour")
+# Send prompt to the model
+response = llm.invoke(prompt)
 
-print(result.content)
+# Print response
+print("Model Response:")
+print(response)
